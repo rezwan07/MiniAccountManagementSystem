@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Assign Role";
+}
+
+<h2>Assign Role to User</h2>
+
+@using (Html.BeginForm())
+{
+    <label>User Email:</label>
+    <br />
+    <input type="email" name="userEmail" required />
+    <br />
+    <br />
+
+    <label>Role Name:</label>
+    <br />
+    <select name="roleName" required>
+        <option value="Admin">Admin</option>
+        <option value="Accountant">Accountant</option>
+        <option value="Viewer">Viewer</option>
+    </select>
+    <br />
+    <br />
+
+    <button type="submit">Assign Role</button>
+}
+
+@if (ViewBag.Message != null)
+{
+    <p style="color:green;">@ViewBag.Message</p>
+}
