@@ -1,0 +1,32 @@
+﻿@model MiniAccountManagementSystem.Models.ChartOfAccount
+
+@{
+    ViewBag.Title = "Edit Account";
+}
+
+<h2>Edit Account</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <label>Name:</label>
+    <br />
+    @Html.TextBoxFor(m => m.Name)
+    <br />
+    <br />
+
+    <label>Parent ID (optional):</label>
+    <br />
+    @Html.TextBoxFor(m => m.ParentId)
+    <br />
+    <br />
+
+    <label>Account Type:</label>
+    <br />
+    @Html.TextBoxFor(m => m.AccountType)
+    <br />
+    <br />
+
+    <button type="submit">Update</button>
+}

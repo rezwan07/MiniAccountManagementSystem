@@ -1,0 +1,90 @@
+﻿@model MiniAccountManagementSystem.Models.Voucher
+@{
+    ViewBag.Title = "Create Voucher";
+    var accountList = ViewBag.Accounts as List<SelectListItem>;
+}
+
+<h2>Create Voucher</h2>
+
+@using (Html.BeginForm())
+{
+    <div>
+        <label>Voucher Type:</label>
+        @Html.TextBoxFor(m => m.VoucherType)
+    </div>
+    <div>
+        <label>Date:</label>
+        @Html.TextBoxFor(m => m.VoucherDate, new { @type = "date" })
+    </div>
+    <div>
+        <label>Reference No:</label>
+        @Html.TextBoxFor(m => m.ReferenceNo)
+    </div>
+
+    <br />
+    <h3>Voucher Lines</h3>
+    <table border="1" id="voucherTable">
+        <tr>
+            <th>Account</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Remarks</th>
+            <th>Action</th>
+        </tr>
+
+        @for (int i = 0; i < Model.Details.Count; i++)
+        {
+            <tr>
+                <td>
+                    @Html.DropDownListFor(m => m.Details[i].AccountId, accountList)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Details[i].DebitAmount)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Details[i].CreditAmount)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Details[i].Remarks)
+                </td>
+                <td>
+                    <button type="button" onclick="removeRow(this)">Remove</button>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <br />
+    <button type="button" onclick="addRow()">Add Row</button>
+    <br /><br />
+    <input type="submit" value="Save" />
+}
+
+@section Scripts {
+<script>
+    function addRow() {
+        var index = $('#voucherTable tr').length - 1;
+        var newRow = `
+        <tr>
+            <td>
+                <select name="Details[${index}].AccountId">
+                    @foreach (var item in accountList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
+            <td><input type="text" name="Details[${index}].DebitAmount" /></td>
+            <td><input type="text" name="Details[${index}].CreditAmount" /></td>
+            <td><input type="text" name="Details[${index}].Remarks" /></td>
+            <td><button type="button" onclick="removeRow(this)">Remove</button></td>
+        </tr>
+        `;
+        $('#voucherTable').append(newRow);
+    }
+
+    function removeRow(btn) {
+        $(btn).closest('tr').remove();
+    }
+</script>
+}

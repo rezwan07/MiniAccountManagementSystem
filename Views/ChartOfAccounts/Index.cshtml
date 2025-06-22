@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MiniAccountManagementSystem.Models.ChartOfAccount>
+
+@{
+    ViewBag.Title = "Chart of Accounts";
+}
+
+<h2>Chart of Accounts</h2>
+
+<p>
+    <a href="@Url.Action("Create", "ChartOfAccounts")">+ Add New Account</a>
+</p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <tr>
+        <th>Name</th>
+        <th>Parent ID</th>
+        <th>Type</th>
+        <th>Active</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.ParentId</td>
+            <td>@item.AccountType</td>
+            <td>@(item.IsActive ? "Yes" : "No")</td>
+            <td>
+                <a href="@Url.Action("Edit", "ChartOfAccounts", new { id = item.Id })">Edit</a> |
+                <a href="@Url.Action("Delete", "ChartOfAccounts", new { id = item.Id })" onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,22 @@
+﻿@model List<MiniAccountManagementSystem.Models.Voucher>
+
+<h2>All Vouchers</h2>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>ID</th>
+        <th>Voucher Type</th>
+        <th>Date</th>
+        <th>Reference No</th>
+    </tr>
+
+    @foreach (var v in Model)
+    {
+        <tr>
+            <td>@v.Id</td>
+            <td>@v.VoucherType</td>
+            <td>@v.VoucherDate.ToShortDateString()</td>
+            <td>@v.ReferenceNo</td>
+        </tr>
+    }
+</table>B

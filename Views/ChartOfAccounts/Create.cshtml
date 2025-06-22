@@ -1,0 +1,26 @@
+﻿@model MiniAccountManagementSystem.Models.ChartOfAccount
+
+<h2>Add New Account</h2>
+
+@using (Html.BeginForm())
+{
+    <label>Name:</label>
+    <br />
+    @Html.TextBoxFor(m => m.Name)
+    <br />
+    <br />
+
+    <label>Parent ID (optional):</label>
+    <br />
+    @Html.TextBoxFor(m => m.ParentId)
+    <br />
+    <br />
+
+    <label>Account Type:</label>
+    <br />
+    @Html.TextBoxFor(m => m.AccountType)
+    <br />
+    <br />
+
+    <button type="submit">Save</button>
+}
