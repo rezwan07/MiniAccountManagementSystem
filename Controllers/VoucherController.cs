@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace MiniAccountManagementSystem.Controllers
 {
@@ -99,6 +102,72 @@ namespace MiniAccountManagementSystem.Controllers
                 }
             }
             return accounts;
+        }
+
+        public ActionResult ExportToExcel()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Voucher No");
+            dt.Columns.Add("Date");
+            dt.Columns.Add("Type");
+            dt.Columns.Add("Account");
+            dt.Columns.Add("Debit");
+            dt.Columns.Add("Credit");
+            dt.Columns.Add("Remarks");
+
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+                string query = @"
+            SELECT 
+                V.ReferenceNo,
+                V.VoucherDate,
+                V.VoucherType,
+                A.Name AS AccountName,
+                D.DebitAmount,
+                D.CreditAmount,
+                D.Remarks
+            FROM Vouchers V
+            INNER JOIN VoucherDetails D ON V.Id = D.VoucherId
+            INNER JOIN ChartOfAccounts A ON D.AccountId = A.Id
+            ORDER BY V.VoucherDate DESC";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    dt.Rows.Add(
+                        reader["ReferenceNo"],
+                        Convert.ToDateTime(reader["VoucherDate"]).ToString("yyyy-MM-dd"),
+                        reader["VoucherType"],
+                        reader["AccountName"],
+                        reader["DebitAmount"],
+                        reader["CreditAmount"],
+                        reader["Remarks"]
+                    );
+                }
+            }
+
+            string filename = "Vouchers_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+
+            GridView gv = new GridView();
+            gv.DataSource = dt;
+            gv.DataBind();
+
+            StringWriter sw = new StringWriter();
+            HtmlTextWriter hw = new HtmlTextWriter(sw);
+            gv.RenderControl(hw);
+
+            Response.ClearContent();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+            Response.ContentType = "application/ms-excel";
+            Response.Charset = "";
+            Response.Output.Write(sw.ToString());
+            Response.Flush();
+            Response.End();
+
+            return null;
         }
     }
 }
