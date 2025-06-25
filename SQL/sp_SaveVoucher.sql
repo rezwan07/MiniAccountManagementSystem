@@ -1,4 +1,4 @@
-﻿USE [MiniAccountDB]
+﻿ USE [MiniAccountDB]
 GO
 /****** Object:  StoredProcedure [dbo].[sp_SaveVoucher]    Script Date: 6/23/2025 3:31:20 PM ******/
 SET ANSI_NULLS ON

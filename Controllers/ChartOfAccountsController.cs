@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace MiniAccountManagementSystem.Controllers
 {
@@ -123,6 +126,49 @@ namespace MiniAccountManagementSystem.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public FileResult ExportToExcel()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Columns.Add("ParentId");
+            dt.Columns.Add("Type");
+            dt.Columns.Add("IsActive");
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Name, ParentId, AccountType, IsActive FROM ChartOfAccounts", con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    dt.Rows.Add(reader["Name"], reader["ParentId"], reader["AccountType"], reader["IsActive"]);
+                }
+            }
+
+            string filename = "ChartOfAccounts_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+            using (StringWriter sw = new StringWriter())
+            {
+                using (HtmlTextWriter hw = new HtmlTextWriter(sw))
+                {
+                    GridView gv = new GridView();
+                    gv.DataSource = dt;
+                    gv.DataBind();
+                    gv.RenderControl(hw);
+
+                    Response.ClearContent();
+                    Response.Buffer = true;
+                    Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                    Response.ContentType = "application/ms-excel";
+                    Response.Charset = "";
+                    Response.Output.Write(sw.ToString());
+                    Response.Flush();
+                    Response.End();
+
+                    return null; // required but won’t be executed
+                }
+            }
         }
 
     }
